@@ -1,12 +1,12 @@
 wordlist :: [String]
-wordlist = ["tap", "private", "elevator", "first"]
+wordlist = ["tap", "private", "elevator"]
 --wordlist = ["bit", "rap"]
 
 --The State is the current list of words.
 type State = [String]
 
 initial :: State
-initial = []
+initial = ["first"]
 
 loser :: State
 loser = []
@@ -20,7 +20,7 @@ goalTest :: State -> Bool
 goalTest s = (inOrder s) && ([x | x <- wordlist, notElem x s] == [])
 
 operator :: State -> [State]
-operator s = [(x:s) | x <- wordlist, (notElem x s) && (inOrder (x:s))]
+operator s = [ s ++ [x] | x <- wordlist, (notElem x s) && (inOrder (s ++ [x]))]
 
 search :: State
 search = treeSearch [initial] operator

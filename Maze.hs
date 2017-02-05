@@ -27,17 +27,17 @@ loser :: State
 loser = []
 
 goalTest :: State -> Bool
-goalTest (x:xs) = x == goal 
+goalTest (x:xs) = x == goal
 
 next :: State -> [Cell]
-next (c:cs) = [(x,y)| (x,y) <-[(fst c + 1, snd c), (fst c - 1, snd c), (fst c, snd c + 1), (fst c, snd c - 1)], 
-               notElem (x, y) walls && (x >= 0 && y >= 0) && (x < fst bounds && y < snd bounds)] 
+next (c:cs) = [(x,y)| (x,y) <-[(fst c + 1, snd c), (fst c - 1, snd c), (fst c, snd c + 1), (fst c, snd c - 1)],
+               notElem (x, y) walls && (x >= 0 && y >= 0) && (x < fst bounds && y < snd bounds)]
 
 operator:: State -> [State]
 operator (xs) = [(n:xs) | n <- next xs, notElem n xs]
 
 search :: State
-search = treeSearch [initial] operator  
+search = treeSearch [initial] operator
 
 treeSearch :: [State] -> (State -> [State]) -> State
 treeSearch [] op = loser
@@ -45,4 +45,3 @@ treeSearch (x:xs) op
  | goalTest x  = x
  | otherwise   = treeSearch (newstates ++ xs) op
   where newstates = op x
-
