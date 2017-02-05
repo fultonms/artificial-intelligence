@@ -48,4 +48,4 @@ goalTest :: State -> Bool
 goalTest s = testRows(s) && (testCols [[x | x <- map (!! col) s ] | col <- [0..fst bounds]])
 
 operator :: State -> [State]
-operator s = [s] 
+   operator s = [[]]
