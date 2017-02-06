@@ -6,11 +6,13 @@ nullTile = (0,0,0,0)
 
 tiles = [(1,3,2,4), (1,3,4,2), (3,1,2,4), (3,1,4,2), (1,2,4,3)]
 
+graph = [[(1,4,2,4), (1,4,4,3), (1,4,3,2)],[(4,1,2,2), (4,1,2,2), (4,1,2,2)],[(1,3,4,2), (1,4,2,4), (1,4,4,3)]]
+
 --A Grid is composed of a list of list of tiles.  The inner lists are rows.
 type Grid = [[Tile]]
 
 bounds :: (Int, Int)
-bounds = (3,3)
+bounds = (2,2)
 
 type State = Grid
 
@@ -38,7 +40,7 @@ testCol [] = True
 testCol [x] = True
 testCol (x:xs) = let (_,b,_,_) = x
                      (t,_,_,_ ) = (head xs) 
-                 in ((t == b) || ((t == 0) || (b == 0))) && testRow(xs)
+                 in ((t == b) || ((t == 0) || (b == 0))) && testCol(xs)
 
 testCols :: [[Tile]] -> Bool
 testCols [] = True
@@ -46,6 +48,3 @@ testCols (x:xs) = testCol(x) && testCols(xs)
 
 goalTest :: State -> Bool
 goalTest s = testRows(s) && (testCols [[x | x <- map (!! col) s ] | col <- [0..fst bounds]])
-
-operator :: State -> [State]
-   operator s = [[]]
