@@ -64,13 +64,13 @@ goalTest s = testRows s && testCols (transformToCol s)  && rowsComplete (map len
 
 genState :: Tile -> Int -> State -> State
 genState t offset graph
-  | offset == size                    = []
-  | (length (graph !! offset)) < size = [([t] ++ graph!!offset)] ++ genState t (offset + 1) graph
-  | otherwise                         = [(graph!!offset)] ++ genState t (offset + 1) graph
+  | offset == 0                 = []
+  | (length (graph !! offset)) < size = [([t] ++ graph!!offset)] ++ fst (splitAt (offset - 1) graph)
+  | otherwise                         = [(graph!!offset)] ++ genState t (offset - 1) graph
 
 genNextStates :: [Tile] -> State -> [State]
 genNextStates [] s = []
-genNextStates (t:ts) s = [[x | x <- genState t 0 (reverse s)]] ++ (genNextStates ts s)
+genNextStates (t:ts) s = [[ x | x <- genState t (length s - 1) s]] ++ (genNextStates ts s)
 
 operator :: State -> [State]
 operator s = [x | x <- genNextStates tiles s]
