@@ -1,9 +1,6 @@
 --A Tile has four numbers on it, in order (TOP, BOT, LEFT, RIGHT)
 type Tile = (Int, Int, Int, Int)
 
-nullTile :: Tile
-nullTile = (0,0,0,0)
-
 tiles :: [Tile]
 tiles = [(1,3,4,2), (3,3,2,4), (1,4,3,2), (4,1,2,2), (1,1,3,4)]
 
@@ -62,18 +59,21 @@ rowsComplete (x:xs) = (x == size) && rowsComplete xs
 goalTest :: State -> Bool
 goalTest s = testRows s && testCols (transformToCol s)  && rowsComplete (map length s)
 
+legalState :: State -> Bool
+legalState s = testRows s && testCols (transformToCol s)
+
 genState :: Tile -> Int -> State -> State
 genState t offset graph
   | offset == 0                 = []
-  | (length (graph !! offset)) < size = [([t] ++ graph!!offset)] ++ fst (splitAt (offset - 1) graph)
-  | otherwise                         = [(graph!!offset)] ++ genState t (offset - 1) graph
+  | (length (graph !! offset)) < size = fst (splitAt (offset) graph) ++ [([t] ++ graph!!offset)]
+  | otherwise                         = genState t (offset - 1) graph ++ [(graph!!offset)]
 
 genNextStates :: [Tile] -> State -> [State]
 genNextStates [] s = []
 genNextStates (t:ts) s = [[ x | x <- genState t (length s - 1) s]] ++ (genNextStates ts s)
 
 operator :: State -> [State]
-operator s = [x | x <- genNextStates tiles s]
+operator s = [x | x <- genNextStates tiles s, legalState s]
 
 search :: State
 search = treeSearch [initial] operator
