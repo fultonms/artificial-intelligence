@@ -1,5 +1,4 @@
-testCols (x:xs) = True
-s is a position on the board
+-- Pos is a position on the board
 -- it is a row and column
 type Pos = (Int,Int)
 

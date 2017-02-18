@@ -1,5 +1,4 @@
-testCols (x:xs) = True
-s is a position on the board
+-- Pos is a position on the board
 -- it is a row and column
 type Pos = (Int,Int)
 
@@ -120,7 +119,12 @@ goalTest (B ((c1:c1s),p))
 -- heuristic of 0 only looks at distance travelled so far
 -- I want you to replace this with your heuristic
 h :: State -> Int
-h x = 0
+h (B(c,p)) = minimum [(distance x done )| x <- c]
+
+distance:: Pos -> Pos -> Int
+distance a b = let (x1, y1) = a
+                   (x2, y2) = b
+               in (abs (x1-x2)) + (abs (y1-y2))
   
 -- moves a specific car in the parking lot
 -- takes the car and the rest of the parking lot
