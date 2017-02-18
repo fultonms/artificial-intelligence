@@ -38,7 +38,18 @@ goalTest (B (x,c)) =     x == 0
 -- heuristic of 0 only looks at distance travelled so far
 -- I want you to replace this with your heuristic
 h :: State -> Int
-h x = 0
+h (B (x,c)) = x + (onTop x c)
+
+onTop :: Int -> Config -> Int
+onTop t [] = 0
+onTop t (x:xs)
+   | elem t x  = (listDistance t x) + (onTop t xs)
+   | otherwise = 0
+
+listDistance:: Int -> Pile -> Int
+listDistance t (x:xs)
+   | x == t    = 0 
+   | otherwise = 1 + (listDistance t xs)
 
 -- gives list of all states resulting from a legal move of a 
 -- block from one pile to another
