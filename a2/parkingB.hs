@@ -119,8 +119,8 @@ goalTest (B ((c1:c1s),p))
   | last (c1:c1s) == done = True
   | otherwise = False
 
--- heuristic of 0 only looks at distance travelled so far
--- I want you to replace this with your heuristic
+-- This heuristic takes the minimum distance to the goal from one of the car's
+-- points along with the number of cards obstructing the path as cost to goal.
 h :: State -> Int
 h (B(c,p)) = minimum [(length (pointsBetween x done ))| x <- c]
              + (obstructions (shortest [(pointsBetween x done)| x <- c]) p)

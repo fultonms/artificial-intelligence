@@ -51,7 +51,7 @@ up  ((c1,c2) : (d1,d2) : cs) p
   | c2 /= d2 = []
   | c1 == 1 = []
   | occupied (c1-1,c2) p = []
-  | otherwise =  [(c1-1,c2) : init ((c1,c2):(d1,d2) : cs)] 
+  | otherwise =  [(c1-1,c2) : init ((c1,c2):(d1,d2) : cs)]
 
 right :: Car -> Parking -> [Car]
 right  ((c1,c2) : (d1,d2) : cs) p
@@ -66,21 +66,21 @@ left  ((c1,c2) : (d1,d2) : cs) p
   | c1 /= d1 = []
   | c2 == 1 = []
   | occupied (c1,c2-1) p = []
-  | otherwise =  [(c1,c2-1) : init ((c1,c2):(d1,d2) : cs)] 
+  | otherwise =  [(c1,c2-1) : init ((c1,c2):(d1,d2) : cs)]
 
 occupied :: Pos -> Parking -> Bool
 occupied z []  = False
 occupied z (c : cs)
   | inSpot z c = True
   | otherwise = occupied z cs
-  
+
 inSpot :: Pos -> Car -> Bool
 inSpot z [] = False
 inSpot z (c : cs)
   | z == c = True
   | otherwise = inSpot z cs
 
--- initial state 
+-- initial state
 c1 :: Car
 c1 = [(1,2),(2,2)]
 
@@ -103,7 +103,7 @@ p2 :: Parking
 p2 = [c5]
 
 initialState :: State
-initialState = B (c1,p) 
+initialState = B (c1,p)
 
 -- empty list if there is no solution
 loser :: History
@@ -111,13 +111,13 @@ loser = []
 
 -- we are done when in the final position
 goalTest :: State -> Bool
-goalTest (B ((c1:c1s),p))  
+goalTest (B ((c1:c1s),p))
   | c1 == done = True
   | last (c1:c1s) == done = True
-  | otherwise = False  
-  
--- heuristic of 0 only looks at distance travelled so far
--- I want you to replace this with your heuristic
+  | otherwise = False
+
+-- This heauristic finds the shortest direct distance to the goal from one
+-- of the car's points as the cost.
 h :: State -> Int
 h (B(c,p)) = minimum [(distance x done )| x <- c]
 
@@ -125,7 +125,7 @@ distance:: Pos -> Pos -> Int
 distance a b = let (x1, y1) = a
                    (x2, y2) = b
                in (abs (x1-x2)) + (abs (y1-y2))
-  
+
 -- moves a specific car in the parking lot
 -- takes the car and the rest of the parking lot
 -- returns the set of all possible new positions of the car
@@ -135,8 +135,8 @@ moveCar c p = down c p
   ++ left c p
   ++ right c p
 
--- moves all cars in the parking lot   
--- takes a board 
+-- moves all cars in the parking lot
+-- takes a board
 -- returns a list of boards resulting from moving
 moveCars :: Board -> [Board]
 moveCars (B (c,p)) = moveCarsPrev c [] p
@@ -148,7 +148,7 @@ putBackYourCar [] p = []
 putBackYourCar (c:cs) p = (B (c,p)) : (putBackYourCar cs p)
 
 -- takes your car
--- takes a list of values of another car in the parking lot 
+-- takes a list of values of another car in the parking lot
 -- plus the rest of  the parking lot
 -- returns a list of new boards resulting from that
 putBackAnotherCar :: Car -> [Car] -> Parking -> [Board]
@@ -159,10 +159,10 @@ putBackAnotherCar c (c1:c1s) p = (B (c,c1:p)) : (putBackAnotherCar c c1s p)
 -- first argument is your car
 -- second argument is previous cars in the parking lot
 -- third argument is the cars left in the parking lot
--- returns a list of new boards resulting from a move 
+-- returns a list of new boards resulting from a move
 moveCarsPrev :: Car -> Parking -> Parking -> [Board]
-moveCarsPrev c p [] =  putBackYourCar (moveCar c p) p  
-moveCarsPrev c p1 (c2:p2) = 
+moveCarsPrev c p [] =  putBackYourCar (moveCar c p) p
+moveCarsPrev c p1 (c2:p2) =
   (putBackAnotherCar c (moveCar  c2 (c:p1 ++ p2))  (p1 ++ p2)) ++ (moveCarsPrev c (c2:p1) p2)
 
 -- the operator moves a car in some direction
@@ -175,7 +175,7 @@ type Node = (History, Int, Int)
 -- print out board in a nice way
 instance Show Board where
   show (B x) = show x ++ "\n"
-  
+
 -- let's you do IO
 --  x = do
 --  print a
@@ -189,7 +189,7 @@ astar = aStarSearch [([initialState],0,h initialState)] [] 0
 
 -- this is the search function
 --
--- it takes 
+-- it takes
 -- 1. a sorted list of nodes to be processed
 -- 2. the list of states that have already been processed
 -- 3. the number of nodes that have been processed so far
@@ -200,7 +200,7 @@ astar = aStarSearch [([initialState],0,h initialState)] [] 0
 -- if the first node to be processed is a goal node then we are done
 -- if the first node to be processed has already been processed it ignores it
 -- otherwise it applies the operator to the first node to be processed
---   and inserts all the new nodes into the sorted list  
+--   and inserts all the new nodes into the sorted list
 aStarSearch :: [Node] -> [State] -> Int -> (Node,Int)
 aStarSearch [] used counter = ((loser,0,0),counter)
 aStarSearch (((x:xs),gVal,hVal):ss) used counter
@@ -208,8 +208,8 @@ aStarSearch (((x:xs),gVal,hVal):ss) used counter
   | elem x used = aStarSearch ss used counter
   | otherwise  = aStarSearch (insertAll newNodes ss) (x:used) (counter + 1)
     where newNodes = [((n:ns),gVal+1,h n) | (n:ns) <- (operator (x:xs))]
-   
--- insert a list of nodes into a sorted list 
+
+-- insert a list of nodes into a sorted list
 insertAll :: [Node] -> [Node] -> [Node]
 insertAll [] ns = ns
 insertAll (m:ms) ns = insertAll ms (insert m ns)
@@ -220,4 +220,3 @@ insert x [] = [x]
 insert (x1,g1,h1) ((x2,g2,h2):rest)
   | g1 + h1 <= g2 + h2  = (x1,g1,h1):((x2,g2,h2):rest)
   | otherwise     = (x2,g2,h2):(insert (x1,g1,h1) rest)
-
