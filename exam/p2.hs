@@ -30,12 +30,16 @@ next (v:vs) = [y | (x,y) <- edges, x==v]
 operator:: State -> [State]
 operator vs = [(n:vs) | n <- next vs, notElem n vs]
 
-search :: State
-search = treeSearch [initialState] operator  
+dfs :: [State] -> (State -> [State]) -> State
+dfs [] op = loser
+dfs (x:xs) op
+   | goalTest x  = x
+   | otherwise   = dfs (newstates ++ xs) op
+   where newstates = op x
 
-treeSearch :: [State] -> (State -> [State]) -> State
-treeSearch [] op = loser
-treeSearch (x:xs) op
- | goalTest x  = x
- | otherwise   = treeSearch (xs ++ newstates) op
-  where newstates = op x
+bfs :: [State] -> (State -> [State]) -> State
+bfs [] op = loser
+bfs (x:xs) op
+   | goalTest x   = x
+   | otherwise    = bfs (xs ++ newstates) op
+   where newstates = op x  
