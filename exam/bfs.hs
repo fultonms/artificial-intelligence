@@ -37,5 +37,5 @@ treeSearch :: [State] -> (State -> [State]) -> State
 treeSearch [] op = loser
 treeSearch (x:xs) op
  | goalTest x  = x
- | otherwise   = treeSearch (newstates ++ xs) op
+ | otherwise   = treeSearch (xs ++ newstates) op
   where newstates = op x
