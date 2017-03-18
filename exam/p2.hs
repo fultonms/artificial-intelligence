@@ -1,17 +1,19 @@
+import Debug.Trace
+
 type Vertex = Int
 type Edge = (Vertex,Vertex)
 
 vertices :: [Vertex]
-vertices = [1..6]
+vertices = [1..15]
 
 edges :: [Edge]
-edges = [(1,2),(1,3),(2,3),(3,1),(2,4),(4,5),(3,6)]
+edges = [(1,2),(1,3),(2,4),(2,5),(3,6),(3,7),(4,8),(4,9),(5,10),(5,11),(6,12),(6,13),(7,14),(7,15)]
 
 start :: Vertex
 start = 1
 
 stop :: Vertex
-stop = 6
+stop = 15
 
 type State = [Vertex]
 
@@ -32,6 +34,7 @@ operator vs = [(n:vs) | n <- next vs, notElem n vs]
 
 dfs :: [State] -> (State -> [State]) -> State
 dfs [] op = loser
+dfs x op | trace (show x) False = undefined
 dfs (x:xs) op
    | goalTest x  = x
    | otherwise   = dfs (newstates ++ xs) op
@@ -39,7 +42,8 @@ dfs (x:xs) op
 
 bfs :: [State] -> (State -> [State]) -> State
 bfs [] op = loser
+bfs x op | trace (show x) False = undefined
 bfs (x:xs) op
    | goalTest x   = x
    | otherwise    = bfs (xs ++ newstates) op
-   where newstates = op x  
+   where newstates = op x
