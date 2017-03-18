@@ -20,3 +20,9 @@ alphabeta (x:xs) d a b player
   | player      = max( -9999999, alphabeta (newstates ++ x) (d-1) a b False)
   | otherwise   = min( 9999999, alphabeta (newstates ++ x) (d-1) a b True)
   where newstates = operator xs
+
+alphabetaMin :: [State] -> Int -> Int -> Int -> Int -> Int
+alphabetaMin [] d v a b = v
+alphabetaMin (x:xs) d v a b
+  | b <= newA   = v
+  | otherwise 
